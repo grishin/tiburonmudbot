@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiburonMUD.Bot", "TiburonMUDBot\TiburonMUD.Bot.csproj", "{310C203B-CD1E-4C70-8CC2-74CF667390F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiburonMUD.Bot", "TiburonMUD.Bot\TiburonMUD.Bot.csproj", "{310C203B-CD1E-4C70-8CC2-74CF667390F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiburonMUD.Engine", "MudEngine\TiburonMUD.Engine.csproj", "{D7C7C2FC-8F71-4979-9D28-254B817C5298}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiburonMUD.Engine", "TiburonMUD.Engine\TiburonMUD.Engine.csproj", "{D7C7C2FC-8F71-4979-9D28-254B817C5298}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
