@@ -7,6 +7,8 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TiburonMUD.Engine;
 using TiburonMUD.Engine.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TiburonMUD.Bot.Services
 {
@@ -24,15 +26,14 @@ namespace TiburonMUD.Bot.Services
         private TelegramBotClient _bot;
 
         private World _world;
-        private Player _player;
+        private List<Player> _players = new List<Player>();
 
         public BotService()
         {
             _messageLogger = LogManager.GetLogger("message");
             _exceptionLogger = LogManager.GetCurrentClassLogger();
 
-            _world = new WorldBuilder().Build();
-            _player = new Player(_world, "R_Entrance");
+            _world = new WorldBuilder().Build();    
         }
 
         public void Start(string token)
@@ -68,11 +69,11 @@ namespace TiburonMUD.Bot.Services
         {
             var messageText = message.Text.ToLowerInvariant();
 
-            if (messageText == "l")
+            if (messageText == "l" || messageText == "look")
             {
                 await LookCommand(message);
             }
-            else if (messageText == "n")
+            else if (messageText == "n" || messageText == "north")
             {
                 await MoveCommand(message, Direction.North);
             }
@@ -96,17 +97,64 @@ namespace TiburonMUD.Bot.Services
             {
                 await MoveCommand(message, Direction.Down);
             }
+            else if (messageText == "who")
+            {
+                await  WhoCommand(message);
+            }
+            else if (messageText == "help")
+            {
+                await HelpCommand(message);
+            }
+        }
+
+        private Player GetPlayerById(string id)
+        {
+            var player = _players.Where(x => x.Name == id).FirstOrDefault();
+            if (player == null)
+            {
+                player = new Player(id, _world, "R_Entrance");
+                _players.Add(player);
+            }
+
+            return player;
         }
 
         private async Task LookCommand(Message message)
         {
-            string responseText = $"{_player.CurrentRoom.Name.ToUpperInvariant()}\r\n{_player.CurrentRoom.Description}";
+            var player = GetPlayerById(message.From.Username);
+
+            string responseText = $"{player.CurrentRoom.Name.ToUpperInvariant()}\r\n{player.CurrentRoom.Description}";
             await _bot.SendTextMessageAsync(message.Chat.Id, responseText);
         }
 
+        private async Task WhoCommand(Message message)
+        {
+            string responseText = $"Online: " + string.Join(" ", _players.Select(x=>x.Name + " => " + x.CurrentRoom.Id));
+            await _bot.SendTextMessageAsync(message.Chat.Id, responseText);
+        }
+
+        private async Task HelpCommand(Message message)
+        {
+            string responseText = @"Welcome to Tiburon MUD. Available commands: 
+l or look - look around
+n - go north
+s - go south
+e - go east
+w - go west
+u - go up
+d - go down
+who - who is online
+help - this text
+";
+            await _bot.SendTextMessageAsync(message.Chat.Id, responseText);
+        }
+
+
         private async Task MoveCommand(Message message, Direction direction)
         {
-            if (_player.Move(direction))
+            var player = GetPlayerById(message.From.Username);
+
+            if (player.Move(direction))
             {
                 await LookCommand(message);
             }

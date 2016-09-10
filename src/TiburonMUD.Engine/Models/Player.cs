@@ -4,19 +4,23 @@ namespace TiburonMUD.Engine.Models
 {
     public class Player
     {
+        public string Name { get; private set; }
+        public World World { get; private set; }
         public Room CurrentRoom { get; private set; }
 
-        private readonly World _world;
+        
 
-        public Player(World world, string roomId)
+        public Player(string name, World world, string roomId)
         {
-            _world = world;
+            Name = name;
+            World = world;
+
             Relocate(roomId);
         }
 
         public void Relocate(string id)
         {
-            CurrentRoom = _world.Rooms.FirstOrDefault(x => x.Id == id);
+            CurrentRoom = World.Rooms.FirstOrDefault(x => x.Id == id);
         }
 
         public bool Move(Direction direction)
